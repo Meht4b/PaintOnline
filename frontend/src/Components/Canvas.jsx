@@ -1,66 +1,105 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 
 const Canvas = ({color}) => {
   const canvasRef = React.useRef(null);
   const [isDrawing, setIsDrawing] = React.useState(false);
   const [lastPoint, setLastPoint] = React.useState({ x: 0, y: 0 });
 
+  
 
-  React.useEffect(() => {
-    const canvas = canvasRef.current;
-    const ctx = canvas.getContext('2d');
-    ctx.lineCap = 'round';
-    ctx.lineJoin = 'round';
-    ctx.strokeStyle = 'black';
-    ctx.strokeStyle = color;
-    ctx.lineWidth = 20;
-  }, []);
-
-
-  React.useEffect(() => {
-    const resizeCanvas = () => {
+  useEffect(() => {
       const canvas = canvasRef.current;
-      if (canvas) {
-        canvas.width = window.innerWidth-5;
-        canvas.height = window.innerHeight-5;
+      canvas.width = 4000;
+      canvas.height = 4000;
+      drawBackgroundPointsPattern(canvas);
+  }, []); 
+
+  const drawBackgroundGrid = (canvas) => {
+    const ctx = canvas.getContext('2d');
+    const gridSize = 20;
+    ctx.strokeStyle = '#e0e0e0'; // Light gray color for grid lines
+    ctx.lineWidth = 1;
+    for (let x = 0; x <= canvas.width; x += gridSize) {
+      ctx.beginPath();
+      ctx.moveTo(x, 0);
+      ctx.lineTo(x, canvas.height);
+      ctx.stroke();
+    }
+    for (let y = 0; y <= canvas.height; y += gridSize) {
+      ctx.beginPath();
+      ctx.moveTo(0, y);
+      ctx.lineTo(canvas.width, y);
+      ctx.stroke();
+    }
+    ctx.strokeStyle = '#000000'; // Reset stroke style to black for drawing
+    ctx.lineWidth = 2; // Reset line width for drawing
+  }
+
+  const drawBackgroundCheckeredPattern = (canvas) => {
+    const ctx = canvas.getContext('2d');
+    const patternSize = 40;
+    ctx.fillStyle = '#f0f0f0';
+    for (let x = 0; x < canvas.width; x += patternSize) {
+      for (let y = 0; y < canvas.height; y += patternSize) {
+        ctx.fillRect(x, y, patternSize / 2, patternSize / 2);
+        ctx.fillRect(x + patternSize / 2, y + patternSize / 2, patternSize / 2, patternSize / 2);
       }
-    };
-    resizeCanvas();
-    window.addEventListener('resize', resizeCanvas);
-    return () => window.removeEventListener('resize', resizeCanvas);
-  }, []);
+    }
+    ctx.fillStyle = '#000000'; // Reset fill style to black for drawing
+  }
 
-  const getPointerPos = (e) => {
-    const rect = canvasRef.current.getBoundingClientRect();
-    const clientX = e.touches ? e.touches[0].clientX : e.clientX;
-    const clientY = e.touches ? e.touches[0].clientY : e.clientY;
-    return {
-      x: clientX - rect.left,
-      y: clientY - rect.top
-    };
-  };
+  const drawBackgroundPointsPattern = (canvas) => {
+    const ctx = canvas.getContext('2d');
+    const pointSpacing = 20;
+    ctx.fillStyle = '#d0d0d0';
+    for (let x = 0; x < canvas.width; x += pointSpacing) {
+      for (let y = 0; y < canvas.height; y += pointSpacing) {
+        ctx.beginPath();
+        ctx.arc(x, y, 1, 0, Math.PI * 2);
+        ctx.fill();
+      }
+    }
+    ctx.fillStyle = '#000000'; // Reset fill style to black for drawing
+  }
 
-  const handlePointerDown = (e) => {
-    setIsDrawing(true);
-    setLastPoint(getPointerPos(e));
-  };
-
-  const handlePointerMove = (e) => {
-    if (!isDrawing) return;
+  const handleMouseDown = (e) => {
     const canvas = canvasRef.current;
     const ctx = canvas.getContext('2d');
-    const newPoint = getPointerPos(e);
+    ctx.strokeStyle = color || "#000000ff"; // Use passed color prop or default
+    ctx.lineWidth = 2;
+    ctx.lineCap = 'round';
+    ctx.lineJoin = 'round'; // Add this for smoother line joins
     ctx.beginPath();
-    ctx.moveTo(lastPoint.x, lastPoint.y);
-    ctx.lineTo(newPoint.x, newPoint.y);
-    ctx.stroke();
-    setLastPoint(newPoint);
-  };
+    ctx.moveTo(e.nativeEvent.offsetX, e.nativeEvent.offsetY);
+    setLastPoint({ x: e.nativeEvent.offsetX, y: e.nativeEvent.offsetY });
+    setIsDrawing(true);
+  }
 
-  const handlePointerUp = () => {
+  const handleMouseUp = (e) => {
     setIsDrawing(false);
-  };
+  }
 
+  const handleMouseMove = (e) => {
+    const canvas = canvasRef.current;
+    const ctx = canvas.getContext('2d');
+    if (isDrawing) {
+      ctx.beginPath();
+      ctx.moveTo(lastPoint.x, lastPoint.y);
+      ctx.lineTo(e.nativeEvent.offsetX, e.nativeEvent.offsetY);
+      ctx.stroke();
+      setLastPoint({ x: e.nativeEvent.offsetX, y: e.nativeEvent.offsetY });
+    } 
+  }
+
+  const drawStroke = (fromX, fromY, toX, toY) => {
+    const canvas = canvasRef.current;
+    const ctx = canvas.getContext('2d');
+    ctx.beginPath();
+    ctx.moveTo(fromX, fromY);
+    ctx.lineTo(toX, toY);
+    ctx.stroke();
+  }
+  
   return (
     <div>
       <canvas
@@ -69,16 +108,11 @@ const Canvas = ({color}) => {
         width="800"
         height="600"
         style={{ border: 'none', touchAction: 'none' }}
-        onMouseDown={handlePointerDown}
-        onMouseMove={handlePointerMove}
-        onMouseUp={handlePointerUp}
-        onMouseLeave={handlePointerUp}
-        onTouchStart={handlePointerDown}
-        onTouchMove={handlePointerMove}
-        onTouchEnd={handlePointerUp}
         padding="0"
         margin="0"
-          
+        onMouseDown={handleMouseDown}  
+        onMouseUp={handleMouseUp}
+        onMouseMove={handleMouseMove}
       ></canvas>
     </div>
   );
