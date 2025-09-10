@@ -14,7 +14,7 @@ const Canvas = ({color,lineWidth,opacity}) => {
       canvas.height = 4000;
 
       socket.on('draw', (data) => {
-        drawStroke(data.fromX, data.fromY, data.toX, data.toY, data.lineWidth,data.color);
+        drawStroke(data.fromX, data.fromY, data.toX, data.toY, data.lineWidth,data.color,data.opacity);
       });
       
   }, []); 
@@ -88,8 +88,8 @@ const Canvas = ({color,lineWidth,opacity}) => {
     ctx.strokeStyle = color ; // Use passed color prop or default
     ctx.lineWidth = lineWidth ; // Use passed lineWidth prop or default
     ctx.globalAlpha = opacity; // Set opacity (0.0 to 1.0)
-    ctx.lineCap = 'round';
-    ctx.lineJoin = 'round'; // Add this for smoother line joins
+    ctx.lineCap = 'flat';
+    ctx.lineJoin = 'flat'; // Add this for smoother line joins
     ctx.beginPath();
     ctx.moveTo(e.nativeEvent.offsetX, e.nativeEvent.offsetY);
     setLastPoint({ x: e.nativeEvent.offsetX, y: e.nativeEvent.offsetY });
@@ -99,7 +99,7 @@ const Canvas = ({color,lineWidth,opacity}) => {
   const handleMouseUp = (e) => {
     if (isDrawing){
       drawStroke(lastPoint.x, lastPoint.y, e.nativeEvent.offsetX, e.nativeEvent.offsetY);
-      socket.emit('draw', {fromX: lastPoint.x, fromY: lastPoint.y, toX: e.nativeEvent.offsetX, toY: e.nativeEvent.offsetY,lineWidth:lineWidth,color:color});
+      socket.emit('draw', {fromX: lastPoint.x, fromY: lastPoint.y, toX: e.nativeEvent.offsetX, toY: e.nativeEvent.offsetY,lineWidth:lineWidth,color:color,room:sessionStorage.getItem("user"),opacity:opacity});
     }
     setIsDrawing(false);
   }
@@ -112,7 +112,7 @@ const Canvas = ({color,lineWidth,opacity}) => {
       ctx.moveTo(lastPoint.x, lastPoint.y);
       ctx.lineTo(e.nativeEvent.offsetX, e.nativeEvent.offsetY);
       ctx.stroke();
-      socket.emit('draw', {fromX: lastPoint.x, fromY: lastPoint.y, toX: e.nativeEvent.offsetX, toY: e.nativeEvent.offsetY, color:color,lineWidth:lineWidth,opacity:opacity});
+      socket.emit('draw', {fromX: lastPoint.x, fromY: lastPoint.y, toX: e.nativeEvent.offsetX, toY: e.nativeEvent.offsetY, color:color,lineWidth:lineWidth,room:sessionStorage.getItem("user"),opacity:opacity});
       setLastPoint({ x: e.nativeEvent.offsetX, y: e.nativeEvent.offsetY });
     } 
   }

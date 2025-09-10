@@ -21,7 +21,7 @@ function Login({propLogin, propError,setLoggedIn,callBack}) {
         const user = { name, password };
 
         if (Login == 0) {
-            const url = "http://172.20.185.151:5000/create_user";
+            const url = "http://172.20.186.54:5000/create_user";
             const options = {
                 method: "POST",
                 headers: {
@@ -44,7 +44,7 @@ function Login({propLogin, propError,setLoggedIn,callBack}) {
         }
 
         if (Login == 1) {
-            const url = "http://172.20.185.151:5000/check_password"
+            const url = "http://172.20.186.54:5000/check_password"
             const options = {
                 method: "POST",
                 headers: {

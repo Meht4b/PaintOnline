@@ -6,7 +6,7 @@ from sqlalchemy import event
 from sqlalchemy.engine import Engine
 import os 
 from dotenv import load_dotenv
-from flask_socketio import SocketIO, emit
+from flask_socketio import SocketIO, emit, join_room, leave_room
 
 load_dotenv()
 jwt_secret_key = os.getenv('JWT_SECRET_KEY')
