@@ -1,6 +1,7 @@
 import React, { useEffect } from 'react'
+import socket from './Socket';
 
-const Canvas = ({color}) => {
+const Canvas = ({color,lineWidth,opacity}) => {
   const canvasRef = React.useRef(null);
   const [isDrawing, setIsDrawing] = React.useState(false);
   const [lastPoint, setLastPoint] = React.useState({ x: 0, y: 0 });
@@ -11,7 +12,11 @@ const Canvas = ({color}) => {
       const canvas = canvasRef.current;
       canvas.width = 4000;
       canvas.height = 4000;
-      drawBackgroundPointsPattern(canvas);
+
+      socket.on('draw', (data) => {
+        drawStroke(data.fromX, data.fromY, data.toX, data.toY, data.lineWidth,data.color);
+      });
+      
   }, []); 
 
   const drawBackgroundGrid = (canvas) => {
@@ -61,12 +66,28 @@ const Canvas = ({color}) => {
     }
     ctx.fillStyle = '#000000'; // Reset fill style to black for drawing
   }
+  useEffect(() => {
+    const handleMouseLeave = () => {
+      setIsDrawing(false);
+    };
+    const canvas = canvasRef.current;
+    if (canvas) {
+      canvas.addEventListener('mouseleave', handleMouseLeave);
+    }
+    return () => {
+      if (canvas) {
+        canvas.removeEventListener('mouseleave', handleMouseLeave);
+      }
+    };
+  }, []);
+
 
   const handleMouseDown = (e) => {
     const canvas = canvasRef.current;
     const ctx = canvas.getContext('2d');
-    ctx.strokeStyle = color || "#000000ff"; // Use passed color prop or default
-    ctx.lineWidth = 2;
+    ctx.strokeStyle = color ; // Use passed color prop or default
+    ctx.lineWidth = lineWidth ; // Use passed lineWidth prop or default
+    ctx.globalAlpha = opacity; // Set opacity (0.0 to 1.0)
     ctx.lineCap = 'round';
     ctx.lineJoin = 'round'; // Add this for smoother line joins
     ctx.beginPath();
@@ -76,6 +97,10 @@ const Canvas = ({color}) => {
   }
 
   const handleMouseUp = (e) => {
+    if (isDrawing){
+      drawStroke(lastPoint.x, lastPoint.y, e.nativeEvent.offsetX, e.nativeEvent.offsetY);
+      socket.emit('draw', {fromX: lastPoint.x, fromY: lastPoint.y, toX: e.nativeEvent.offsetX, toY: e.nativeEvent.offsetY,lineWidth:lineWidth,color:color});
+    }
     setIsDrawing(false);
   }
 
@@ -87,21 +112,26 @@ const Canvas = ({color}) => {
       ctx.moveTo(lastPoint.x, lastPoint.y);
       ctx.lineTo(e.nativeEvent.offsetX, e.nativeEvent.offsetY);
       ctx.stroke();
+      socket.emit('draw', {fromX: lastPoint.x, fromY: lastPoint.y, toX: e.nativeEvent.offsetX, toY: e.nativeEvent.offsetY, color:color,lineWidth:lineWidth,opacity:opacity});
       setLastPoint({ x: e.nativeEvent.offsetX, y: e.nativeEvent.offsetY });
     } 
   }
 
-  const drawStroke = (fromX, fromY, toX, toY) => {
+  const drawStroke = (fromX, fromY, toX, toY,lineWidth,otherColor,opacity) => {
     const canvas = canvasRef.current;
     const ctx = canvas.getContext('2d');
     ctx.beginPath();
+    ctx.strokeStyle = otherColor;
+    ctx.globalAlpha = opacity;
+    ctx.lineWidth = lineWidth;
+    ctx.lineCap = 'round';
+    ctx.lineJoin = 'round'; // Add this for smoother line joins
     ctx.moveTo(fromX, fromY);
     ctx.lineTo(toX, toY);
     ctx.stroke();
   }
   
   return (
-    <div>
       <canvas
         ref={canvasRef}
         id="canvas"
@@ -113,8 +143,7 @@ const Canvas = ({color}) => {
         onMouseDown={handleMouseDown}  
         onMouseUp={handleMouseUp}
         onMouseMove={handleMouseMove}
-      ></canvas>
-    </div>
+      />
   );
 }
 

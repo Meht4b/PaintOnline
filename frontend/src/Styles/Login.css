@@ -1,0 +1,107 @@
+.login-container{
+    border: #DBDBDB 1px solid;
+    width: clamp(300px, 25%, 400px);
+    background-color: #ffffff;
+    display: flex;
+    gap: 30px;
+    flex-direction: column;
+    justify-content: space-between;
+
+    align-items: center;
+    border-radius: 30px;
+    box-shadow: 0px 0px 15px -5px rgba(209, 209, 209, 0.75);
+}
+
+.login-container h1{
+    font-size: 64px;
+    margin-bottom: 20px;
+    font-weight: 800;
+    width: 100%;
+    padding: 10px;
+    text-align: center;
+    border-bottom: #DBDBDB 1px solid;
+    box-shadow: 0 4px 8px 0 #e8e8e88a;
+}
+
+.input-group{
+    display: flex;
+    flex-direction: column;
+    width: 80%;
+}
+
+.input-group input{
+    font-size: 17px;
+    border: solid 1px #E6E6E6;
+    border-radius: 10px;
+    padding: 10px;
+}
+
+.input-group input:focus{
+    outline: none;
+    border: solid 1px #CFCFCF;
+    box-shadow: 0px 0px 10px -3px rgba(209, 209, 209, 0.75);
+    transition: 0.2s;
+}
+
+.login-submit{
+    border: none;
+    background-color: #ffffff;
+    border-radius: 10px;
+    padding: 10px;
+    margin-top: 20px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: 0.2s;
+    width: 60%;
+    border: #DBDBDB 1px solid;
+}
+
+.login-submit:hover{
+    transition: 0.2s;
+    box-shadow: 0px 0px 10px -3px rgba(209, 209, 209, 0.75);
+}
+
+.login-submit h2{
+    font-size: 30px;
+}
+
+.register-link{
+    background-color: transparent;
+    width: 100%;
+    border: none;
+    border-top: #DBDBDB 1px solid;
+    padding: 10px;
+    box-shadow: 0 -4px 8px 0 #e8e8e88a;
+}
+
+.register-link h3{
+    color: #888888;
+    font-weight: 500;
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+.register-link h3:hover{
+    color: #555555;
+    transition: 0.2s;
+}
+
+.register-submit{
+    margin-bottom: 30px;
+}
+
+.login-error{
+    background-color: rgb(255, 80, 80);
+    position: absolute;
+    bottom: 5px;
+    padding: 10px;
+    border-radius: 10px;
+}
+
+.register-success{
+    background-color: rgb(80, 255, 80);
+    position: absolute;
+    bottom: 5px;
+    padding: 10px;
+    border-radius: 10px;
+}
