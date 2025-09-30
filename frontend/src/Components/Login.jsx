@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import '../styles/Login.css'
 import { useEffect } from 'react';
-
+import APIEndpoint from '../APIEndpoint';
 
 function Login({propLogin, propError,setLoggedIn,callBack}) {
 
@@ -21,7 +21,7 @@ function Login({propLogin, propError,setLoggedIn,callBack}) {
         const user = { name, password };
 
         if (Login == 0) {
-            const url = "http://172.20.186.54:5000/create_user";
+            const url =APIEndpoint+ "/create_user";
             const options = {
                 method: "POST",
                 headers: {
@@ -44,7 +44,7 @@ function Login({propLogin, propError,setLoggedIn,callBack}) {
         }
 
         if (Login == 1) {
-            const url = "http://172.20.186.54:5000/check_password"
+            const url = APIEndpoint + "/check_password"
             const options = {
                 method: "POST",
                 headers: {

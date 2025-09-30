@@ -17,14 +17,14 @@ class Rooms(db.Model):
     
     id = db.Column(db.Integer,primary_key = True, autoincrement=True)
     name = db.Column(db.String(80), nullable = False)
-    user0 = db.Column(db.Integer, db.ForeignKey('users.id'), nullable = True)
-    user1 = db.Column(db.Integer, db.ForeignKey('users.id'), nullable = True,default=None)
-    user2 = db.Column(db.Integer, db.ForeignKey('users.id'), nullable = True,default=None)
-    user3 = db.Column(db.Integer, db.ForeignKey('users.id'), nullable = True,default=None)
-    user4 = db.Column(db.Integer, db.ForeignKey('users.id'), nullable = True,default=None)
-    user5 = db.Column(db.Integer, db.ForeignKey('users.id'), nullable = True,default=None)
-    user6 = db.Column(db.Integer, db.ForeignKey('users.id'), nullable = True,default=None)
-    user7 = db.Column(db.Integer, db.ForeignKey('users.id'), nullable = True,default=None)
+    user0 = db.Column(db.Integer, nullable = True)
+    user1 = db.Column(db.Integer, nullable = True,default=None)
+    user2 = db.Column(db.Integer, nullable = True,default=None)
+    user3 = db.Column(db.Integer, nullable = True,default=None)
+    user4 = db.Column(db.Integer, nullable = True,default=None)
+    user5 = db.Column(db.Integer, nullable = True,default=None)
+    user6 = db.Column(db.Integer, nullable = True,default=None)
+    user7 = db.Column(db.Integer, nullable = True,default=None)
 
     user0_name = db.Column(db.String(80), nullable = True, default=None)
     user1_name = db.Column(db.String(80), nullable = True, default=None)
@@ -34,7 +34,6 @@ class Rooms(db.Model):
     user5_name = db.Column(db.String(80), nullable = True, default=None)
     user6_name = db.Column(db.String(80), nullable = True, default=None)
     user7_name = db.Column(db.String(80), nullable = True, default=None)
-
 
 
     def to_json(self):
@@ -68,6 +67,10 @@ class Strokes(db.Model):
     fromY = db.Column(db.Integer, nullable = False)
     toX = db.Column(db.Integer, nullable = False)
     toY = db.Column(db.Integer, nullable = False)
+    opacity = db.Column(db.Float, nullable = True, default=1.0)
+    lineWidth = db.Column(db.Integer, nullable = True, default=1)
+    color = db.Column(db.String(20), nullable = True, default="#000000")
+
 
 
     room = db.relationship('Rooms', backref='strokes')
