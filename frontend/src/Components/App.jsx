@@ -4,13 +4,13 @@ import Canvas from './Canvas'
 import Login from './Login'
 import socket from './Socket'
 import SideMenu from './SideMenu'
-
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import Dashboard from './Dashboard.jsx'; // the post-login component
+import LandingPage from './LandingPage.jsx';
 
 function App() {
 
-  const [color,setColor] = useState("#000000ff");
-  const [lineWidth,setLineWidth] = useState(2);
-  const [opacity,setOpacity] = useState(1.0);
+  
 
   useEffect(() => {
       socket.on("user_joined", (data) => {
@@ -26,19 +26,15 @@ function App() {
     socket.emit("join_canvas", {"user_name":sessionStorage.getItem("user")});
   }
 
-  return (
-    <>
-      {
-        loggedIn ?
-        <>
-        <Canvas color={color} lineWidth={lineWidth} opacity={opacity}/>
-        <SideMenu color={color} setColor={setColor} opacity={opacity} setOpacity={setOpacity} lineWidth={lineWidth} setLineWidth={setLineWidth}/>
-        </>
-         : 
-        <Login propLogin={1} propError={0} setLoggedIn={setLoggedIn} callBack={callbackFunction} />
-      }
-    </>
-  )
+return (
+    <Router>
+      <Routes>
+        <Route path="/" element={<LandingPage loggedIn ={loggedIn} />} />
+        <Route path="/login" element={<Login propLogin={1} propError={0} setLoggedIn={setLoggedIn} callBack={callbackFunction}/>}/>
+        <Route path="/dashboard" element={<Dashboard />} />
+      </Routes>
+    </Router>
+  );
 }
 
 export default App
