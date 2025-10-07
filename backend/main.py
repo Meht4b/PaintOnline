@@ -202,7 +202,7 @@ def get_rooms(search):
         if search != "NULLNULL":
             rooms = Rooms.query.filter(Rooms.name.ilike(f'%{search}%')).all()
         else:
-        json_rooms = list(map(lambda x: x.to_json(),rooms))
+            json_rooms = list(map(lambda x: x.to_json(),rooms))
 
         return jsonify({"rooms" : json_rooms})
     except Exception as e:
