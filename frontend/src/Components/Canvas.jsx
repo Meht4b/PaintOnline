@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react'
 import socket from './Socket';
 
-const Canvas = ({color,lineWidth,opacity}) => {
+const Canvas = ({color,lineWidth,opacity,curRoom}) => {
   const canvasRef = React.useRef(null);
   const [isDrawing, setIsDrawing] = React.useState(false);
   const [lastPoint, setLastPoint] = React.useState({ x: 0, y: 0 });

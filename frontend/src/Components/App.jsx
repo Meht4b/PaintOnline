@@ -24,6 +24,7 @@ function App() {
   
   const callbackFunction = () => {
     socket.emit("join_canvas", {"user_name":sessionStorage.getItem("user")});
+    window.location.href = "./dashboard"
   }
 
 return (
